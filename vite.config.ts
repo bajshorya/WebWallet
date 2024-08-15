@@ -14,4 +14,7 @@ export default defineConfig({
       buffer: path.resolve(__dirname, "node_modules/buffer/"),
     },
   },
+  build: {
+    outDir: "build", // Customize the output directory here
+  },
 });
