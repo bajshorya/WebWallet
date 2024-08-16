@@ -47,7 +47,7 @@ const GenerateWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
       <div>
         <div>
           <h1 className="m-5 text-4xl font-extrabold ">
-            How Many Walltes Do You Want ?
+            How Many Wallets Do You Want ?
           </h1>
           <Textarea
             value={walletCount}
@@ -65,7 +65,7 @@ const GenerateWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
           {wallets.map((wallet, index) => (
             <li
               key={index}
-              className="m-2 border text-slate-100 font-bold  min-w-max bg-slate-950"
+              className="m-2 border text-slate-100 font-bold  bg-slate-500"
             >
               {wallet}
             </li>
