@@ -15,9 +15,16 @@ const HandleMnemonic = () => {
           onGenerateMnemonic={handleGenerateMnemonic}
           mnemonic={mnemonic}
         />
-        <div className="m-5 text-4xl font-extrabold">
-          How Many Wallets Do You Want?
+        <div className="m-14">
+          <div className="m-5 text-4xl font-extrabold">
+            How Many Wallets Do You Want?
+          </div>
+          <div className="font-light mt-3">
+            Enter the number of wallets you require from the above generated
+            mnemonic in the respective textareaa below !!!
+          </div>
         </div>
+
         <div className="flex gap-3 justify-around">
           <GenerateWallets mnemonic={mnemonic} />
           <GenerateEthWallets mnemonic={mnemonic} />

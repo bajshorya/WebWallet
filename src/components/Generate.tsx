@@ -17,7 +17,13 @@ const Generate: React.FC<GenerateProps> = ({
   return (
     <div>
       <div className="m-5 text-4xl font-extrabold ">
-        <Button onClick={handleGenerateMnemonic}>Generate Mnemonic</Button>
+        <Button
+          variant="destructive"
+          size="lg"
+          onClick={handleGenerateMnemonic}
+        >
+          Generate Mnemonic
+        </Button>
       </div>
       <Textarea
         value={mnemonic}
