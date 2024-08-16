@@ -10,7 +10,7 @@ const Generate: React.FC<GenerateProps> = ({
   onGenerateMnemonic,
   mnemonic,
 }) => {
-  const handleGenerateMnemonic = () => {
+  const handleGenerateMnemonic = async () => {
     const newMnemonic = generateMnemonic();
     onGenerateMnemonic(newMnemonic);
   };

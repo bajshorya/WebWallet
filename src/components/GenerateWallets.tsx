@@ -13,35 +13,45 @@ interface GenerateWalletsProps {
 const GenerateWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
   const [walletCount, setWalletCount] = useState<string>("");
   const [wallets, setWallets] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [publicKeys, setPublicKeys] = useState<string[]>([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setWalletCount(event.target.value);
-    // console.log(event.target.value);
   };
+
   const handleSubmit = () => {
     const count = parseInt(walletCount, 10);
     if (!isNaN(count)) {
       console.log(`Number of wallets requested: ${count}`);
+      generate(count);
     } else {
       alert("Please enter a valid number.");
     }
-    generate(count);
   };
+
   const generate = (walletCount: number) => {
     const seed = mnemonicToSeedSync(mnemonic);
     const newWallets: string[] = [];
 
     for (let i = 0; i < walletCount; i++) {
-      const path = `m/44'/60'/${i}'/0'`; // This is the derivation path
+      const path = `m/44'/501'/${i}'/0'`; // This is the correct derivation path for Solana
       const derivedSeed = derivePath(path, seed.toString("hex")).key;
-      const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
-      const publicKey = Keypair.fromSecretKey(secret).publicKey.toBase58();
+      const keypair = nacl.sign.keyPair.fromSeed(derivedSeed);
+      const solanaKeypair = Keypair.fromSecretKey(keypair.secretKey);
+
+      const publicKey = solanaKeypair.publicKey.toBase58();
       newWallets.push(publicKey);
-      console.log(publicKey);
+
+      setCurrentIndex(currentIndex + 1);
+      setPublicKeys([...publicKeys, publicKey]);
+      console.log(currentIndex);
+      console.log(publicKeys);
     }
 
     setWallets(newWallets);
   };
+
   return (
     <div>
       <div>
