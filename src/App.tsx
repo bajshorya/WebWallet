@@ -1,8 +1,5 @@
 import { useState } from "react";
 import "./App.css";
-import { Button } from "./components/ui/button";
-import Generate from "./components/Generate";
-import GenerateWallets from "./components/GenerateWallets";
 import HandleMnemonic from "./components/HandleMnemonic";
 
 function App() {
