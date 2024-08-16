@@ -46,7 +46,7 @@ const GenerateWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
     <div>
       <div>
         <div>
-          <h1 className="m-5 text-4xl font-extrabold ">Soalna Wallets </h1>
+          <h1 className="m-5 text-4xl font-extrabold ">Solana Wallets </h1>
           <Textarea
             value={walletCount}
             placeholder="Enter number of Wallets"
