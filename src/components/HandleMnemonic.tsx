@@ -8,15 +8,14 @@ const HandleMnemonic = () => {
   const handleGenerateMnemonic = (newMnemonic: string) => {
     setMnemonic(newMnemonic);
   };
-
   return (
-    <div className="flex flex-col items-center p-5">
+    <div>
       <Generate
         onGenerateMnemonic={handleGenerateMnemonic}
         mnemonic={mnemonic}
       />
 
-      <div className="flex gap-5 justify-center mt-10 w-full">
+      <div className="flex gap-3 justify-around">
         <GenerateWallets mnemonic={mnemonic} />
         <GenerateEthWallets mnemonic={mnemonic} />
       </div>

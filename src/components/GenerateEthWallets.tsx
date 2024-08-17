@@ -8,49 +8,62 @@ interface GenerateWalletsProps {
   mnemonic: string;
 }
 
-interface Wallet {
-  publicKey: string;
-  privateKey: string;
-}
-
 const GenerateEthWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [wallets, setWallets] = useState<
+    { publicKey: string; privateKey: string; showPrivateKey: boolean }[]
+  >([]);
 
   const generateWallet = () => {
-    if (mnemonic) {
-      const seed = mnemonicToSeedSync(mnemonic);
-      const hdNode = HDNode.fromSeed(seed);
-      const walletNode = hdNode.derivePath(`m/44'/60'/0'/0/${currentIndex}`);
-      const wallet = new ethers.Wallet(walletNode.privateKey);
+    const seed = mnemonicToSeedSync(mnemonic);
+    const hdNode = HDNode.fromSeed(seed);
 
-      const newWallet: Wallet = {
+    const walletNode = hdNode.derivePath(`m/44'/60'/0'/0/${wallets.length}`);
+    const wallet = new ethers.Wallet(walletNode.privateKey);
+    setWallets([
+      ...wallets,
+      {
         publicKey: wallet.address,
         privateKey: wallet.privateKey,
-      };
+        showPrivateKey: false,
+      },
+    ]);
+  };
 
-      setWallets((prevWallets) => [...prevWallets, newWallet]);
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    } else {
-      alert("first generate a mnemonic!!!");
-    }
+  const togglePrivateKeyVisibility = (index: number) => {
+    const updatedWallets = [...wallets];
+    updatedWallets[index].showPrivateKey =
+      !updatedWallets[index].showPrivateKey;
+    setWallets(updatedWallets);
   };
 
   return (
-    <div className="w-full max-w-md p-5  rounded-lg">
-      <h1 className="text-3xl font-extrabold mb-5 text-white">
-        Ethereum Wallets
-      </h1>
-      <Button onClick={generateWallet} className="mb-5">
-        Add Wallet
-      </Button>
-      <ul>
+    <div>
+      <div className="m-5 text-4xl font-extrabold">Ethereum Wallets</div>
+      <Button onClick={generateWallet}>Add Wallet</Button>
+      <ul className="m-3">
         {wallets.map((wallet, index) => (
-          <li key={index} className="mb-3 p-3 border rounded-lg  text-white">
-            <div className="font-bold">Public Key:</div>
-            <div className="break-words">{wallet.publicKey}</div>
-            <div className="font-bold mt-2">Private Key:</div>
-            <div className="break-words">{wallet.privateKey}</div>
+          <li
+            key={index}
+            className="m-2 border p-2 bg-gray-800 text-white rounded-lg"
+          >
+            <div>
+              <strong>Public Key:</strong> {wallet.publicKey}
+            </div>
+            <div className="flex items-center">
+              <strong className="mr-2">Private Key:</strong>
+              <input
+                type={wallet.showPrivateKey ? "text" : "password"}
+                value={wallet.privateKey}
+                readOnly
+                className="bg-transparent border-none outline-none w-full"
+              />
+              <Button
+                className="ml-2"
+                onClick={() => togglePrivateKeyVisibility(index)}
+              >
+                {wallet.showPrivateKey ? "Hide" : "Show"}
+              </Button>
+            </div>
           </li>
         ))}
       </ul>

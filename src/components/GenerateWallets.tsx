@@ -1,61 +1,67 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { mnemonicToSeedSync } from "bip39";
-import { Keypair } from "@solana/web3.js";
 import nacl from "tweetnacl";
+import { mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
+import { Keypair } from "@solana/web3.js";
 
 interface GenerateWalletsProps {
   mnemonic: string;
 }
 
-interface Wallet {
-  publicKey: string;
-  privateKey: string;
-}
-
 const GenerateWallets: React.FC<GenerateWalletsProps> = ({ mnemonic }) => {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [wallets, setWallets] = useState<
+    { publicKey: string; privateKey: string; showPrivateKey: boolean }[]
+  >([]);
 
   const generateWallet = () => {
-    if (mnemonic) {
-      const seed = mnemonicToSeedSync(mnemonic);
-      const path = `m/44'/501'/${currentIndex}'/0'`;
-      const derivedSeed = derivePath(path, seed.toString("hex")).key;
-      const keypair = nacl.sign.keyPair.fromSeed(derivedSeed);
-      const solanaKeypair = Keypair.fromSecretKey(keypair.secretKey);
+    const seed = mnemonicToSeedSync(mnemonic);
+    const path = `m/44'/501'/${wallets.length}'/0'`;
+    const derivedSeed = derivePath(path, seed.toString("hex")).key;
+    const keypair = nacl.sign.keyPair.fromSeed(derivedSeed);
+    const solanaKeypair = Keypair.fromSecretKey(keypair.secretKey);
 
-      const newWallet: Wallet = {
-        publicKey: solanaKeypair.publicKey.toBase58(),
-        privateKey: Buffer.from(solanaKeypair.secretKey).toString("hex"),
-      };
+    const publicKey = solanaKeypair.publicKey.toBase58();
+    const privateKey = Buffer.from(solanaKeypair.secretKey).toString("hex");
 
-      setWallets((prevWallets) => [...prevWallets, newWallet]);
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    } else {
-      alert("first generate a mnemonic!!!");
-    }
+    setWallets([...wallets, { publicKey, privateKey, showPrivateKey: false }]);
+  };
+
+  const togglePrivateKeyVisibility = (index: number) => {
+    const updatedWallets = [...wallets];
+    updatedWallets[index].showPrivateKey =
+      !updatedWallets[index].showPrivateKey;
+    setWallets(updatedWallets);
   };
 
   return (
-    <div className="w-full max-w-md p-5  rounded-lg">
-      <h1 className="text-3xl font-extrabold mb-5 text-white">
-        Solana Wallets
-      </h1>
-      <Button onClick={generateWallet} className="mb-5">
-        Add Wallet
-      </Button>
-      <ul>
+    <div>
+      <div className="m-5 text-4xl font-extrabold">Solana Wallets</div>
+      <Button onClick={generateWallet}>Add Wallet</Button>
+      <ul className="m-3">
         {wallets.map((wallet, index) => (
           <li
             key={index}
-            className="mb-3 p-3 border rounded-lg bg-gray-700 text-white"
+            className="m-2 border p-2 bg-gray-800 text-white rounded-lg"
           >
-            <div className="font-bold">Public Key:</div>
-            <div className="break-words">{wallet.publicKey}</div>
-            <div className="font-bold mt-2">Private Key:</div>
-            <div className="break-words">{wallet.privateKey}</div>
+            <div>
+              <strong>Public Key:</strong> {wallet.publicKey}
+            </div>
+            <div className="flex items-center">
+              <strong className="mr-2">Private Key:</strong>
+              <input
+                type={wallet.showPrivateKey ? "text" : "password"}
+                value={wallet.privateKey}
+                readOnly
+                className="bg-transparent border-none outline-none w-full"
+              />
+              <Button
+                className="ml-2"
+                onClick={() => togglePrivateKeyVisibility(index)}
+              >
+                {wallet.showPrivateKey ? "Hide" : "Show"}
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
