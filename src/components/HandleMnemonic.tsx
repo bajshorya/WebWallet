@@ -6,9 +6,9 @@ import { Button } from "./ui/button";
 
 const HandleMnemonic = () => {
   const [mnemonic, setMnemonic] = useState("");
-  const [selectedWallet, setSelectedWallet] = useState<"solana" | "ethereum">(
-    "solana"
-  );
+  const [selectedWallet, setSelectedWallet] = useState<
+    "solana" | "ethereum" | ""
+  >("");
 
   const handleGenerateMnemonic = (newMnemonic: string) => {
     setMnemonic(newMnemonic);
@@ -41,9 +41,8 @@ const HandleMnemonic = () => {
         </Button>
       </div>
       <div className="flex gap-3 justify-around">
-        {selectedWallet === "solana" ? (
-          <GenerateWallets mnemonic={mnemonic} />
-        ) : (
+        {selectedWallet === "solana" && <GenerateWallets mnemonic={mnemonic} />}
+        {selectedWallet === "ethereum" && (
           <GenerateEthWallets mnemonic={mnemonic} />
         )}
       </div>
